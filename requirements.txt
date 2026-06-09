@@ -1,0 +1,8 @@
+# 学生信息管理系统 依赖
+# Python + MySQL + OOP + Web
+
+# MySQL 数据库驱动
+PyMySQL>=1.1.0
+
+# Web 框架
+Flask>=2.3.0

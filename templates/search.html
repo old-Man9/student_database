@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% block title %}高级搜索{% endblock %}
+
+{% block content %}
+<h4 class="mb-3"><i class="bi bi-funnel"></i> 高级搜索</h4>
+
+<div class="row">
+    <!-- 搜索表单 -->
+    <div class="col-lg-4 mb-3">
+        <div class="card">
+            <div class="card-header"><i class="bi bi-sliders"></i> 筛选条件</div>
+            <div class="card-body">
+                <form method="get">
+                    <div class="mb-3">
+                        <label class="form-label">姓名关键词</label>
+                        <input type="text" name="name" class="form-control" placeholder="模糊搜索" value="{{ name }}">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">年级（精确）</label>
+                        <input type="text" name="grade" class="form-control" placeholder="如: 2024级" value="{{ grade }}">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">专业关键词</label>
+                        <input type="text" name="major" class="form-control" placeholder="模糊搜索" value="{{ major }}">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">性别</label>
+                        <select name="gender" class="form-select">
+                            <option value="">不限</option>
+                            <option value="男" {{ 'selected' if gender=='男' }}>男</option>
+                            <option value="女" {{ 'selected' if gender=='女' }}>女</option>
+                        </select>
+                    </div>
+                    <div class="row g-2">
+                        <div class="col-6">
+                            <label class="form-label">最小年龄</label>
+                            <input type="number" name="age_min" class="form-control" value="{{ age_min }}" min="1" max="120">
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label">最大年龄</label>
+                            <input type="number" name="age_max" class="form-control" value="{{ age_max }}" min="1" max="120">
+                        </div>
+                    </div>
+                    <hr>
+                    <button type="submit" class="btn btn-primary w-100"><i class="bi bi-search"></i> 搜索</button>
+                    <a href="/search" class="btn btn-outline-secondary w-100 mt-2">清除条件</a>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 搜索结果 -->
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between">
+                <span><i class="bi bi-list-ul"></i> 搜索结果</span>
+                <span class="badge bg-primary">{{ total }} 条记录</span>
+            </div>
+            <div class="card-body p-0">
+                {% if results %}
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>学号</th><th>姓名</th><th>性别</th><th>年龄</th>
+                                <th>年级</th><th>专业</th><th>电话</th><th>邮箱</th><th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for s in results %}
+                            <tr>
+                                <td><span class="badge bg-secondary">{{ s.id }}</span></td>
+                                <td><strong>{{ s.name }}</strong></td>
+                                <td>{{ s.gender }}</td>
+                                <td>{{ s.age }}</td>
+                                <td>{{ s.grade }}</td>
+                                <td>{{ s.major }}</td>
+                                <td>{{ s.phone or '-' }}</td>
+                                <td>{{ s.email or '-' }}</td>
+                                <td>
+                                    <a href="/students/{{ s.id }}" class="btn btn-sm btn-outline-info btn-action"><i class="bi bi-eye"></i></a>
+                                    <a href="/students/{{ s.id }}/edit" class="btn btn-sm btn-outline-warning btn-action"><i class="bi bi-pencil"></i></a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="empty-state">
+                    <i class="bi bi-search"></i>
+                    <p>未找到匹配结果，请调整筛选条件</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

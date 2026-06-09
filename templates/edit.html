@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}编辑学生 - {{ student.name }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header"><i class="bi bi-pencil"></i> 编辑学生信息 — 学号: {{ student.id }}</div>
+            <div class="card-body">
+                <form method="post">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label">姓名</label>
+                            <input type="text" name="name" class="form-control" value="{{ student.name }}" minlength="2" maxlength="50">
+                            <small class="text-muted">当前: {{ student.name }}</small>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">性别</label>
+                            <select name="gender" class="form-select">
+                                <option value="男" {{ 'selected' if student.gender in ('男','M') }}>男</option>
+                                <option value="女" {{ 'selected' if student.gender in ('女','F') }}>女</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">年龄</label>
+                            <input type="number" name="age" class="form-control" value="{{ student.age }}" min="1" max="120">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">年级</label>
+                            <input type="text" name="grade" class="form-control" value="{{ student.grade }}" minlength="2">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">专业</label>
+                            <input type="text" name="major" class="form-control" value="{{ student.major }}" minlength="2">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">电话</label>
+                            <input type="text" name="phone" class="form-control" value="{{ student.phone or '' }}" maxlength="20">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">邮箱</label>
+                            <input type="email" name="email" class="form-control" value="{{ student.email or '' }}" maxlength="100">
+                        </div>
+                        <div class="col-md-8">
+                            <label class="form-label">地址</label>
+                            <input type="text" name="address" class="form-control" value="{{ student.address or '' }}" maxlength="200">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">入学日期</label>
+                            <input type="date" name="enrollment" class="form-control"
+                                   value="{{ strftime(student.enrollment) if student.enrollment else '' }}">
+                        </div>
+                    </div>
+                    <div class="mt-4 d-flex gap-2">
+                        <button type="submit" class="btn btn-warning"><i class="bi bi-check-circle"></i> 更新</button>
+                        <a href="/students" class="btn btn-outline-secondary">取消</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}添加学生{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header"><i class="bi bi-plus-circle"></i> 添加新学生</div>
+            <div class="card-body">
+                <form method="post">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label">姓名 <span class="text-danger">*</span></label>
+                            <input type="text" name="name" class="form-control" required placeholder="2-50字符" minlength="2" maxlength="50">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">性别</label>
+                            <select name="gender" class="form-select">
+                                <option value="男">男</option>
+                                <option value="女">女</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">年龄 <span class="text-danger">*</span></label>
+                            <input type="number" name="age" class="form-control" required value="20" min="1" max="120">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">年级 <span class="text-danger">*</span></label>
+                            <input type="text" name="grade" class="form-control" required placeholder="如: 2024级" minlength="2">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">专业 <span class="text-danger">*</span></label>
+                            <input type="text" name="major" class="form-control" required placeholder="如: 计算机科学与技术" minlength="2">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">电话</label>
+                            <input type="text" name="phone" class="form-control" placeholder="选填" maxlength="20">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">邮箱</label>
+                            <input type="email" name="email" class="form-control" placeholder="选填，需含@" maxlength="100">
+                        </div>
+                        <div class="col-md-8">
+                            <label class="form-label">地址</label>
+                            <input type="text" name="address" class="form-control" placeholder="选填" maxlength="200">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">入学日期</label>
+                            <input type="date" name="enrollment" class="form-control">
+                        </div>
+                    </div>
+                    <div class="mt-4 d-flex gap-2">
+                        <button type="submit" class="btn btn-primary"><i class="bi bi-check-circle"></i> 提交</button>
+                        <a href="/students" class="btn btn-outline-secondary">取消</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

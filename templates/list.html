@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+{% block title %}学生管理{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4><i class="bi bi-people"></i> 学生管理 <span class="text-muted fs-6">(共 {{ total }} 人)</span></h4>
+    <a href="/students/add" class="btn btn-primary"><i class="bi bi-plus-circle"></i> 添加学生</a>
+</div>
+
+<!-- 搜索栏 -->
+<form class="card mb-3" method="get">
+    <div class="card-body py-2">
+        <div class="row g-2 align-items-center">
+            <div class="col-md-4">
+                <div class="search-box">
+                    <i class="bi bi-search"></i>
+                    <input type="text" name="search" class="form-control" placeholder="搜索姓名/专业/年级/电话..."
+                           value="{{ keyword }}">
+                </div>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100"><i class="bi bi-search"></i> 搜索</button>
+            </div>
+            <div class="col-md-2">
+                <a href="/students" class="btn btn-outline-secondary w-100">重置</a>
+            </div>
+            <div class="col-md-2">
+                <a href="/search" class="btn btn-outline-info w-100"><i class="bi bi-funnel"></i> 高级筛选</a>
+            </div>
+        </div>
+    </div>
+</form>
+
+<!-- 批量删除 -->
+<form id="batchForm" method="post" action="/students/batch-delete">
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <span><i class="bi bi-table"></i> 学生列表</span>
+            <span>
+                <button type="button" id="selectAll" class="btn btn-sm btn-outline-secondary me-2">全选</button>
+                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirmBatch()">
+                    <i class="bi bi-trash"></i> 批量删除
+                </button>
+            </span>
+        </div>
+        <div class="card-body p-0">
+            {% if students %}
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th width="40"><input type="checkbox" id="checkAll"></th>
+                            <th>学号</th><th>姓名</th><th>性别</th><th>年龄</th>
+                            <th>年级</th><th>专业</th><th>电话</th><th>邮箱</th>
+                            <th width="160">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for s in students %}
+                        <tr>
+                            <td><input type="checkbox" name="ids" value="{{ s.id }}" class="student-check"></td>
+                            <td><span class="badge bg-secondary">{{ s.id }}</span></td>
+                            <td><a href="/students/{{ s.id }}" class="text-decoration-none"><strong>{{ s.name }}</strong></a></td>
+                            <td>{{ s.gender }}</td>
+                            <td>{{ s.age }}</td>
+                            <td>{{ s.grade }}</td>
+                            <td>{{ s.major }}</td>
+                            <td>{{ s.phone or '-' }}</td>
+                            <td>{{ s.email or '-' }}</td>
+                            <td>
+                                <a href="/students/{{ s.id }}" class="btn btn-sm btn-outline-info btn-action" title="查看"><i class="bi bi-eye"></i></a>
+                                <a href="/students/{{ s.id }}/edit" class="btn btn-sm btn-outline-warning btn-action" title="编辑"><i class="bi bi-pencil"></i></a>
+                                <button type="button" class="btn btn-sm btn-outline-danger btn-action"
+                                        onclick="deleteOne({{ s.id }}, '{{ s.name }}')" title="删除"><i class="bi bi-trash"></i></button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <i class="bi bi-inbox"></i>
+                <p>暂无学生数据</p>
+                <a href="/students/add" class="btn btn-primary"><i class="bi bi-plus-circle"></i> 添加第一个学生</a>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- 分页 -->
+        {% if total > 10 %}
+        <div class="card-footer">
+            <nav>
+                <ul class="pagination justify-content-center mb-0">
+                    <li class="page-item {{ 'disabled' if page <= 1 }}">
+                        <a class="page-link" href="?search={{ keyword }}&page={{ page-1 }}">&laquo;</a>
+                    </li>
+                    {% for i in range(1, total_pages+1) %}
+                        {% if i <= 3 or i > total_pages-3 or (i >= page-2 and i <= page+2) %}
+                        <li class="page-item {{ 'active' if i==page }}">
+                            <a class="page-link" href="?search={{ keyword }}&page={{ i }}">{{ i }}</a>
+                        </li>
+                        {% elif i == 4 or i == total_pages-3 %}
+                        <li class="page-item disabled"><a class="page-link">...</a></li>
+                        {% endif %}
+                    {% endfor %}
+                    <li class="page-item {{ 'disabled' if page >= total_pages }}">
+                        <a class="page-link" href="?search={{ keyword }}&page={{ page+1 }}">&raquo;</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        {% endif %}
+    </div>
+</form>
+
+<!-- 隐藏的单删表单 -->
+<form id="deleteForm" method="post" style="display:none">
+    <input type="hidden" name="ids" id="deleteId">
+</form>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.getElementById('checkAll').addEventListener('change', function() {
+    document.querySelectorAll('.student-check').forEach(cb => cb.checked = this.checked);
+});
+document.getElementById('selectAll').addEventListener('click', function() {
+    let allChecked = [...document.querySelectorAll('.student-check')].every(cb => cb.checked);
+    document.querySelectorAll('.student-check').forEach(cb => cb.checked = !allChecked);
+});
+function deleteOne(id, name) {
+    if (confirm('确定要删除学生 [' + id + '] ' + name + ' 吗？此操作不可撤销。')) {
+        document.getElementById('deleteId').value = id;
+        document.getElementById('deleteForm').action = '/students/' + id + '/delete';
+        document.getElementById('deleteForm').submit();
+    }
+}
+function confirmBatch() {
+    let checked = document.querySelectorAll('.student-check:checked').length;
+    if (checked === 0) { alert('请先选择要删除的学生'); return false; }
+    return confirm('确定要删除选中的 ' + checked + ' 名学生吗？此操作不可撤销。');
+}
+</script>
+{% endblock %}
